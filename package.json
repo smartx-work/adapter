@@ -1,6 +1,6 @@
 {
-  "name": "adapter",
-  "version": "1.0.0",
+  "name": "@smartx/adapter",
+  "version": "1.0.1",
   "description": "js data processing adapter",
   "main": "index.js",
   "repository": "https://github.com/smartx-work/adapter.git",
