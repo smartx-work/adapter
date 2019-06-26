@@ -15,6 +15,37 @@ const baseData = {
     name: '张三',
 }
 
+describe('\n=== 数据转化不影响原始数据 ===', () => {
+    const testData = {
+        data: {
+            value1: 1,
+            value2: 2,
+        },
+    }
+    const newData = transform({
+        data: {
+            $name: 'data2',
+            value1: String,
+            value2: Boolean,
+        },
+    }, testData)
+
+    test('数据转化不影响原始数据', () => {
+        expect(newData).toEqual({
+            data2: {
+                value1: '1',
+                value2: true,
+            },
+        })
+        expect(testData).toEqual({
+            data: {
+                value1: 1,
+                value2: 2,
+            },
+        })
+    })
+})
+
 describe('\n=== 数据类型转化 === ，采用JS内置的转化规则执行转化', () => {
     test('单值型配置；数字转字符串', () => {
         const newData = transform({ price: String }, baseData)
@@ -126,57 +157,250 @@ describe('\n=== 默认值 ===', () => {
     })
 })
 
-describe('\n=== 自定义格式化指令  ===', () => {
+describe('\n=== 添加格式化指令  ===', () => {
     adapter.addFormater('dateFormat', (value) => String(new Date(value)))
 
-    const newData = transform({
-        timestamp: 'format:dateFormat',
-    }, baseData)
+    test('对象型配置；调用格式化指令', () => {
+        const newData = transform({
+            timestamp: { $format: 'dateFormat' },
+        }, baseData)
 
-    console.info({ newData })
+        expect(newData.timestamp).toBe(String(now))
+    })
+
+    test('字符型配置；调用格式化指令', () => {
+        const newData = transform({
+            timestamp: 'format:dateFormat',
+        }, baseData)
+
+        expect(newData.timestamp).toBe(String(now))
+    })
+
+    test('添加多条格化指令', () => {
+        adapter.addFormater({
+            prependYuan: (value) => '￥' + value,
+            appendTx: (value) => value + '同学',
+        })
+
+        const newData = transform({
+            price: 'format:prependYuan',
+            name: { $format: 'appendTx' },
+        }, baseData)
+
+        expect(newData).toEqual({
+            price: '￥' + baseData.price,
+            name: baseData.name + '同学',
+        })
+    })
+
+    test('添加带多个字符串参数的格式化指令', () => {
+        adapter.addFormater({
+            appendUnit: (value, unit, desc) => value + unit + desc,
+        })
+        const newData = transform({
+            name: { $format: 'appendUnit:同学,很厉害' },
+            price: 'format:appendUnit:元,很贵',
+        }, baseData)
+        expect(newData.name).toEqual(baseData.name + '同学很厉害')
+        expect(newData.price).toEqual(baseData.price + '元很贵')
+    })
+
+    test('添加带任意类型参数的格式化指令', () => {
+        adapter.addFormater('addChildren', (value, children) => {
+            return value + ':' + children.join(',')
+        })
+    })
+
+    test('调用任意类型参数的格式化指令', () => {
+        const testData = { proince: '浙江', china: '中国' }
+        const newData = transform({
+            proince: {
+                $format: {
+                    name: 'addChildren',
+                    args: [['杭州', '丽水', '温州']],
+                },
+            },
+            china: {
+                $format: ['addChildren', ['浙江', '北京', '上海']],
+            },
+        }, testData)
+
+        expect(newData.proince).toBe('浙江:' + ['杭州', '丽水', '温州'])
+        expect(newData.china).toBe('中国:' + ['浙江', '北京', '上海'])
+    })
 })
 
-/*
+describe('\n=== 多层对象适配  ===', () => {
+    test('多层常规对象数据适配处理', () => {
+        const testData = {
+            data1: {
+                data2: {
+                    data3: {
+                        value1: 1,
+                        value2: 'yes',
+                        value3: now,
+                    },
+                },
+            },
+            value1: '999',
+        }
+        const newData = transform({
+            data1: {
+                $name: 'data1Copy',
+                data2: {
+                    data3: {
+                        value1: 'enum:中国,美国,日本',
+                        value2: { $emap: { yes: '是', no: '否' } },
+                        value3: (value) => String(value),
+                    },
+                },
+            },
+            value1: Number,
+        }, testData)
 
-test('数据类型转化', () => {
-    const now = new Date()
-    const originData = {
-        price1: 1.11,
-        price2: 2.22,
-        status1: 1,
-        status2: 0,
-        timestamp: +new Date(),
-        time: now,
-    }
-    const newData = adapter.transform({
-        price1: String,
-        price2: { $type: String },
-        status1: Boolean,
-        status2: Boolean,
-        timestamp: Date,
-        time: Number,
-    }, originData)
+        expect(newData).toEqual({
+            data1Copy: {
+                data2: {
+                    data3: {
+                        value1: '美国',
+                        value2: '是',
+                        value3: String(now),
+                    },
+                },
+            },
+            value1: 999,
+        })
+    })
 
-    expect(newData.price1).toBe('1.11')
-    expect(newData.price2).toBe('2.22')
-    expect(newData.status1).toBe(true)
-    expect(newData.status2).toBe(false)
-    expect(newData.timestamp instanceof Date).toBe(true)
-    expect(newData.time).toBe(+now)
+    test('多层数组对象数据适配处理', () => {
+        const testData = [
+            {
+                name: '张三',
+                books: [
+                    {
+                        name: '水浒传',
+                        price: 1.12,
+                        contents: [
+                            '武松喝醉酒',
+                            '路过景阳岗',
+                            '打死了大虫',
+                        ],
+                    },
+                    {
+                        name: '西游记',
+                        price: 9.9,
+                        contents: [
+                            '天蚕石猴',
+                            '一阵巨响',
+                            '捅破上苍',
+                        ],
+                    },
+                ],
+            },
+            {
+                name: '李四',
+                books: [
+                    {
+                        name: '红楼梦',
+                        price: null,
+                        contents: [
+                            '不明所以',
+                        ],
+                    },
+                    {
+                        name: '三国演义',
+                        price: 6.66,
+                        contents: [
+                            '桃园三结义',
+                            '温酒斩华雄',
+                            '火烧大赤壁',
+                        ],
+                    },
+                ],
+            },
+        ]
+        const newData = transform({
+            name: 'name:userName',
+            books: {
+                name: 'bookName',
+                price: { $default: '未知', $value: (value) => value.toFixed(2) + '元' },
+                contents: (value) => value.join(','),
+            },
+        }, testData)
+
+        expect(newData).toEqual([
+            {
+                userName: '张三',
+                books: [
+                    {
+                        bookName: '水浒传',
+                        price: '1.12元',
+                        contents: [
+                            '武松喝醉酒',
+                            '路过景阳岗',
+                            '打死了大虫',
+                        ].join(),
+                    },
+                    {
+                        bookName: '西游记',
+                        price: '9.90元',
+                        contents: [
+                            '天蚕石猴',
+                            '一阵巨响',
+                            '捅破上苍',
+                        ].join(),
+                    },
+                ],
+            },
+            {
+                userName: '李四',
+                books: [
+                    {
+                        bookName: '红楼梦',
+                        price: '未知',
+                        contents: [
+                            '不明所以',
+                        ].join(),
+                    },
+                    {
+                        bookName: '三国演义',
+                        price: '6.66元',
+                        contents: [
+                            '桃园三结义',
+                            '温酒斩华雄',
+                            '火烧大赤壁',
+                        ].join(),
+                    },
+                ],
+            },
+        ])
+    })
 })
 
-test('枚举转化', () => {
-    const originData = {
-        status: 2,
-        type: 0,
-    }
+describe('\n=== 多规则适配器处理  ===', () => {
+    test('多规则适配', () => {
+        const testData = {
+            status: 1,
+            name: '张三',
+        }
+        const newData = transform({
+            status: [
+                true,
+                { $name: 'statusText', $enum: ['已下架', '已上架'] },
+                { $name: 'statusText2', $emap: { '0': '否', '1': '是' } },
+                { $name: 'isOK', $type: Boolean },
+                { $name: 'fixedValue', $value: (value) => value.toFixed(2) },
+                { $name: 'name', $value: (value) => value.toFixed(2) },
+            ],
+        }, testData)
 
-    const newData = adapter.transform({
-        status: 'enum:,已下单,已付款,已发货',
-        type: { $enum: ['已下架', '已上架'] },
-    }, originData)
-
-    expect(newData.status).toBe('已付款')
-    expect(newData.type).toBe('已下架')
+        expect(newData).toEqual({
+            status: 1,
+            statusText: '已上架',
+            statusText2: '是',
+            isOK: true,
+            fixedValue: '1.00',
+            name: '1.00',
+        })
+    })
 })
-*/
