@@ -81,6 +81,7 @@ describe('\n=== 映射类型转化 ===', () => {
         expect(newData.status2).toBe('已销毁')
     })
 })
+
 describe('\n=== 默认值 ===', () => {
     const testData = { userName: '张三', books: [ { name: '水浒传', price: null, contents: null }, { name: null, price: null, contents: ['这是一本天书', '无人能够练成'] } ] }
 
@@ -123,6 +124,16 @@ describe('\n=== 默认值 ===', () => {
             { contents: ['这是一本天书', '无人能够练成'] },
         ])
     })
+})
+
+describe('\n=== 自定义格式化指令  ===', () => {
+    adapter.addFormater('dateFormat', (value) => String(new Date(value)))
+
+    const newData = transform({
+        timestamp: 'format:dateFormat',
+    }, baseData)
+
+    console.info({ newData })
 })
 
 /*
