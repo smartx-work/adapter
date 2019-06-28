@@ -190,12 +190,10 @@ const newData = adapter.transform({
     value: {  // 传递多条指令，就像管道函数一样，前面的结果作为后面的输入
         $format: ['increase:1', 'increase:-2', 'increase:1234', (value) => String(value), 'toArray:'],
     },
-    nameMap: { // 传递任意多个，任意类型的参数
-        $format: { name: 'toMap', args:[ ['张三', '李四'] ] }
-    },
-    numMap: {
-        $format: { name:'toMap', args: [ [1, 2] ] }
-    }
+    value2: [ // 传递任意多个，任意类型的参数
+        { $key: 'nameMap', $format: { name: 'toMap', args:[ ['张三', '李四'] ] } },
+        { $key: 'numMap', $format: { name: 'toMap', args:[ [1, 2] ] } },
+    ]
 }, testData)
 
 // 输出
@@ -205,6 +203,107 @@ const newData = adapter.transform({
     numMap: {'1':'1', '2':'2'}
 }
 ```
+
+### 使用值进行转换 `$value`
+
+```js
+const testData = { value: 1, data: { name:'张三' } }
+const newData = adapter.transform({
+    value: (value) => value + 'K',
+    data: (value) => value.name
+}, testData)
+
+// 输出
+{ value: '1K', data: '张三'}
+```
+
+### 使用默认值
+
+```js
+const testData = { 
+    list: [
+        { name: null, data: null, age: undefined },
+        { name: '张三', data: ['中国', '美国'], age:12 }
+    ]
+}
+const newData = adapter.transform({
+    list: {
+        name: 'default:保密',
+        data: { $default:() => ['中国'] },
+        age: { $default:16 }
+    }
+}, testData)
+
+// 输出
+{
+    list: [
+        { name:'保密', data:['中国'], age:16 },
+        { name:'张三', data:['中国', '美国'], age:12 }
+    ]
+}
+```
+
+### 扩展层级 `$increase`
+
+```js
+const testData = { data:{ name:'张三' } }
+const newData = adapter.transform({
+    data: {
+        $key: 'name',
+        $value: (value) => value.name,
+    }
+    $increase: ['data1', { // 扩展了data1字段
+        data: {
+            $key: 'name1',
+            $value: (value) => value.name
+        }
+        $increase: ['data2', { // 扩展了data2字段
+            data: {
+                 $key: 'name2',
+                $value: (value) => value.name
+            }
+        }]
+       
+    }]
+}, testData)
+
+// 输出
+{
+    name: '张三',
+    data1: {
+        name1: '张三',
+        data2: {
+            name2: '张三'
+        }
+    }
+}
+```
+
+扩展字段使用当前层级的数据进行扩展，一般用在数据进行模块化拆分的时候使用
+
+### 缩减字段 `$reduce`
+
+```js
+const testData = {
+    data1: {
+        data2: {
+            name2: '张三'
+        }
+    }
+}
+const newData = adapter.transform({
+    $reduce: ['data1', { // 缩减data1
+        $reduce: ['data2', { // 缩减data2
+            $increase: ['data', { // 扩展data
+                name2: 'name' // 重命名name2
+            }]
+        }]
+    }]
+}, testData)
+
+// 输出 { data:{ name:'张三' } }
+```
+// 缩减层级，一般在去除模块化实现字段扁平化的时候使用，比如前端业务得到的数据是模块化的，提交给网关需要扁平化，则使用此指令方便数据处理
 
 
 
