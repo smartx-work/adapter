@@ -13,8 +13,9 @@ const tests = [
     require('./commons/multi-levels'),
     require('./commons/multi-rules'),
     require('./commons/flat-mode'),
+    require('./commons/runtime'),
     require('./examples/normal'),
-]
+] // .slice(12, 13)
 
 const now = new Date()
 tests.forEach(test => test.run(adapter, {
