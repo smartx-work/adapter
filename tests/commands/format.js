@@ -121,6 +121,28 @@ module.exports = {
                     { time: '/' },
                 ])
             })
+
+            test('待转化的数据是数组', () => {
+                addFormater({
+                    timeBegin: (value) => value && value[0] ? String(value[0]) : null,
+                    timeEnd: value => value && value[1] ? String(value[1]) : null,
+                })
+
+                const testData = {
+                    time: [now, now],
+                }
+                const newData = transform({
+                    time: [
+                        { $key: 'timeBegin', $format: 'timeBegin' },
+                        { $key: 'timeEnd', $format: 'timeEnd' },
+                    ],
+                }, testData)
+
+                expect(newData).toEqual({
+                    timeBegin: String(now),
+                    timeEnd: String(now),
+                })
+            })
         })
     },
 }
