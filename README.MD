@@ -155,7 +155,7 @@ const newData = adapter.transform({
     }
 })
 
-// 输出 newData === { data:{ books: [ {name:'1.水浒传'}, {name:'2.西游记'} ] } }
+// 输出 newData === { data:{ books: [ {name:'0.水浒传'}, {name:'1.西游记'} ] } }
 ```
 
 
