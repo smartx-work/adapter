@@ -99,6 +99,28 @@ module.exports = {
                     value: ['1', '2', '3', '4'],
                 })
             })
+
+            test('形参个数不足调用', () => {
+                addFormater('timeDefault', (value, format = '#', runtime) => {
+                    return value ? String(value) + format : '/'
+                })
+                const testData = [
+                    { time: now },
+                    { time: null },
+                    { time: undefined },
+                ]
+                const newData = transform({
+                    time: {
+                        $format: 'timeDefault',
+                    },
+                }, testData)
+
+                expect(newData).toEqual([
+                    { time: String(now) + '#' },
+                    { time: '/' },
+                    { time: '/' },
+                ])
+            })
         })
     },
 }

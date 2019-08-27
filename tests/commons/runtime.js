@@ -21,6 +21,7 @@ module.exports = {
                     },
                 ],
             }
+
             test('读取环境变量：$value指令', () => {
                 const newData = transform({
                     list: {

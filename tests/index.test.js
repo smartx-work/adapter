@@ -20,7 +20,7 @@ const tests = {
 }
 
 const now = new Date()
-const nowTest = tests.nil
+const nowTest = tests.all
 if (nowTest) {
     runTest(nowTest)
 } else {
