@@ -1,6 +1,6 @@
 module.exports = {
     run ({ transform }, { testData }) {
-        describe('\n=== 数据类型转化 $type指令 === ，采用JS内置的转化规则执行转化', () => {
+        describe('\n=== 数据类型转化指令：$type === ，采用JS内置的转化规则执行转化', () => {
             test('单值型配置；数字转字符串', () => {
                 const newData = transform({ price: String }, testData)
                 expect(newData.price).toBe('1.11')

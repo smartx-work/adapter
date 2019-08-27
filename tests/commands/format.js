@@ -1,6 +1,6 @@
 module.exports = {
     run ({ transform, addFormater }, { testData, now }) {
-        describe('\n=== 添加格式化指令：$format ===', () => {
+        describe('\n=== 格式化指令：$format ===', () => {
             addFormater('dateFormat', (value) => String(new Date(value)))
 
             test('对象型配置；调用格式化指令', () => {

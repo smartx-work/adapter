@@ -84,6 +84,49 @@ module.exports = {
                     },
                 })
             })
+
+            test('根下$value指令', () => {
+                const newData = transform({
+                    books: {
+                        $increase: {
+                            level1: {
+                                $value (value, runtime) {
+                                    return {
+                                        value, runtime,
+                                    }
+                                },
+                            },
+                        },
+                    },
+
+                }, testData)
+
+                expect(newData).toEqual({
+                    books: [
+                        {
+                            level1: {
+                                value: testData.books[0],
+                                runtime: {
+                                    row: testData.books,
+                                    index: 0,
+                                    root: testData,
+                                },
+                            },
+                        },
+                        {
+                            level1: {
+                                value: testData.books[1],
+                                runtime: {
+                                    row: testData.books,
+                                    index: 1,
+                                    root: testData,
+                                },
+                            },
+                        },
+                    ],
+
+                })
+            })
         })
     },
 }

@@ -1,35 +1,48 @@
 const adapter = require('../lib/adapter')
 
-const tests = [
-    require('./commons/immutable'),
-    require('./commands/type'),
-    require('./commands/enum'),
-    require('./commands/emap'),
-    require('./commands/default'),
-    require('./commands/format'),
-    require('./commands/increase'),
-    require('./commands/reduce'),
-    require('./commands/strict'),
-    require('./commons/multi-levels'),
-    require('./commons/multi-rules'),
-    require('./commons/flat-mode'),
-    require('./commons/runtime'),
-    require('./examples/normal'),
-] // .slice(12, 13)
+const tests = {
+    value: require('./commands/value'),
+    type: require('./commands/type'),
+    enum: require('./commands/enum'),
+    emap: require('./commands/emap'),
+    default: require('./commands/default'),
+    format: require('./commands/format'),
+    increase: require('./commands/increase'),
+    reduce: require('./commands/reduce'),
+    strict: require('./commands/strict'),
+    clears: require('./commands/clears'),
+    immutable: require('./commons/immutable'),
+    multiLevels: require('./commons/multi-levels'),
+    multiRules: require('./commons/multi-rules'),
+    flatMode: require('./commons/flat-mode'),
+    runtime: require('./commons/runtime'),
+    normal: require('./examples/normal'),
+}
 
 const now = new Date()
-tests.forEach(test => test.run(adapter, {
-    now,
-    timestamp: +now,
-    testData: {
-        price: 1.11,
-        status: 2,
-        type: 0,
-        time: now,
+const nowTest = tests.nil
+if (nowTest) {
+    runTest(nowTest)
+} else {
+    for (const key in tests) {
+        runTest(tests[key])
+    }
+}
+
+function runTest (test) {
+    test.run(adapter, {
+        now,
         timestamp: +now,
-        emptyString: '',
-        name: '张三',
-        nullKey: null,
-        falseKey: false,
-    },
-}))
+        testData: {
+            price: 1.11,
+            status: 2,
+            type: 0,
+            time: now,
+            timestamp: +now,
+            emptyString: '',
+            name: '张三',
+            nullKey: null,
+            falseKey: false,
+        },
+    })
+}

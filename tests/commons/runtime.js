@@ -159,6 +159,106 @@ module.exports = {
                     ],
                 })
             })
+
+            test('读取环境变量：$increase.$value指令', () => {
+                const newData = transform({
+                    list: {
+                        books: {
+                            $increase: {
+                                level1: {
+                                    $value (value, runtime) {
+                                        return {
+                                            value, runtime,
+                                        }
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }, testData)
+
+                expect(newData).toEqual({
+                    list: [{
+                        books: [
+                            {
+                                level1: {
+                                    value: testData.list[0].books[0],
+                                    runtime: {
+                                        row: testData.list[0].books,
+                                        index: 0,
+                                        root: testData,
+                                    },
+                                },
+                            },
+                            {
+                                level1: {
+                                    value: testData.list[0].books[1],
+                                    runtime: {
+                                        row: testData.list[0].books,
+                                        index: 1,
+                                        root: testData,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        books: [
+                            {
+                                level1: {
+                                    value: testData.list[1].books[0],
+                                    runtime: {
+                                        row: testData.list[1].books,
+                                        index: 0,
+                                        root: testData,
+                                    },
+                                },
+
+                            },
+                            {
+                                level1: {
+                                    value: testData.list[1].books[1],
+                                    runtime: {
+                                        row: testData.list[1].books,
+                                        index: 1,
+                                        root: testData,
+                                    },
+                                },
+                            },
+                        ],
+
+                    }],
+                })
+            })
+
+            test('读取环境变量：$reduce内部$value指令', () => {
+                const testData = {
+                    level1: {
+                        books: [
+                            { info: { name: '西游记' } },
+                            { info: { name: '水浒传' } },
+                        ],
+                    },
+                }
+                const newData = transform({
+                    $reduce: {
+                        level1: {
+                            books: {
+                                $reduce: {
+                                    info: {
+                                        name: true,
+                                    },
+                                },
+                            },
+
+                        },
+                    },
+                }, testData)
+
+                expect(newData).toEqual({
+                    books: [{ name: '西游记' }, { name: '水浒传' }],
+                })
+            })
         })
     },
 }
