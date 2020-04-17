@@ -62,7 +62,7 @@ module.exports = {
                 const testData = {
                     type: 1,
                     list: [
-                        { name: null, books: ['水浒传', '西游记'] },
+                        { name: null, books: [ '水浒传', '西游记' ] },
                     ],
                 }
                 const newData = transform({
@@ -107,18 +107,22 @@ module.exports = {
                 }, testData)
                 expect(newData).toEqual({
                     list: [
-                        { name: {
-                            value: testData.list[0].name,
-                            row: testData.list[0],
-                            index: 0,
-                            root: testData,
-                        } },
-                        { name: {
-                            value: testData.list[1].name,
-                            row: testData.list[1],
-                            index: 1,
-                            root: testData,
-                        } },
+                        {
+                            name: {
+                                value: testData.list[0].name,
+                                row: testData.list[0],
+                                index: 0,
+                                root: testData,
+                            },
+                        },
+                        {
+                            name: {
+                                value: testData.list[1].name,
+                                row: testData.list[1],
+                                index: 1,
+                                root: testData,
+                            },
+                        },
                     ],
                 })
             })
@@ -135,28 +139,32 @@ module.exports = {
                 const newData = transform({
                     list: {
                         name: {
-                            $format: [{ name: 'testForRuntime', args: [1, 2] }],
+                            $format: [ { name: 'testForRuntime', args: [ 1, 2 ] } ],
                         },
                     },
                 }, testData)
                 expect(newData).toEqual({
                     list: [
-                        { name: {
-                            value: testData.list[0].name,
-                            row: testData.list[0],
-                            index: 0,
-                            root: testData,
-                            arg1: 1,
-                            arg2: 2,
-                        } },
-                        { name: {
-                            value: testData.list[1].name,
-                            row: testData.list[1],
-                            index: 1,
-                            root: testData,
-                            arg1: 1,
-                            arg2: 2,
-                        } },
+                        {
+                            name: {
+                                value: testData.list[0].name,
+                                row: testData.list[0],
+                                index: 0,
+                                root: testData,
+                                arg1: 1,
+                                arg2: 2,
+                            },
+                        },
+                        {
+                            name: {
+                                value: testData.list[1].name,
+                                row: testData.list[1],
+                                index: 1,
+                                root: testData,
+                                arg1: 1,
+                                arg2: 2,
+                            },
+                        },
                     ],
                 })
             })
@@ -179,7 +187,7 @@ module.exports = {
                 }, testData)
 
                 expect(newData).toEqual({
-                    list: [{
+                    list: [ {
                         books: [
                             {
                                 level1: {
@@ -228,7 +236,7 @@ module.exports = {
                             },
                         ],
 
-                    }],
+                    } ],
                 })
             })
 
@@ -257,7 +265,7 @@ module.exports = {
                 }, testData)
 
                 expect(newData).toEqual({
-                    books: [{ name: '西游记' }, { name: '水浒传' }],
+                    books: [ { name: '西游记' }, { name: '水浒传' } ],
                 })
             })
         })

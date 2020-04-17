@@ -11,16 +11,16 @@ module.exports = {
                         { name: '西游记', type: 'm2', price: 60 },
                         { name: '三国演义', type: 'm3', price: null },
                     ],
-                    address: ['浙江省', '杭州市', '江干区', '火车东站旁'],
+                    address: [ '浙江省', '杭州市', '江干区', '火车东站旁' ],
                 }
                 const newData = transform({
                     user: 'name',
-                    sex: { $enum: ['先生', '女士', '保密'] },
+                    sex: { $enum: [ '先生', '女士', '保密' ] },
                     age: Number,
                     books: {
                         name: true,
                         type: { $emap: { m1: '武侠小说', m2: '神话小说', m3: '历史小说' } },
-                        price: { $default: '未知', $value: (value) => '￥' + value.toFixed(2) },
+                        price: { $default: '未知', $value: (value) => `￥${value.toFixed(2)}` },
                     },
                     address: (value) => value.join(''),
                 }, originData)
@@ -44,7 +44,7 @@ module.exports = {
                     if (format === 'YYYY') {
                         return value.getFullYear()
                     }
-                    return value.getFullYear() + '/' + (value.getMonth() + 1) + '/' + value.getDate()
+                    return `${value.getFullYear()}/${value.getMonth() + 1}/${value.getDate()}`
                 })
 
                 const originData = {
@@ -58,11 +58,11 @@ module.exports = {
                             goodsSkuList: [
                                 {
                                     id: 1000,
-                                    attrs: ['红色', 'XXL'],
+                                    attrs: [ '红色', 'XXL' ],
                                 },
                                 {
                                     id: 1001,
-                                    attrs: ['黑色', 'XXL'],
+                                    attrs: [ '黑色', 'XXL' ],
                                 },
                             ],
                             isSale: 1,
@@ -78,11 +78,11 @@ module.exports = {
                             goodsSkuList: [
                                 {
                                     id: 1000,
-                                    attrs: ['红色', 'XXL'],
+                                    attrs: [ '红色', 'XXL' ],
                                 },
                                 {
                                     id: 1001,
-                                    attrs: ['黑色', 'XXL'],
+                                    attrs: [ '黑色', 'XXL' ],
                                 },
                             ],
                             isSale: 0,
@@ -101,11 +101,11 @@ module.exports = {
                         goodsCode: 'code', // 重命名goodsCode => code
                         goodsTitle: {
                             $key: 'title',
-                            $value: (value) => '标题：' + value, // 进行重命名和数据格式化，可以通过扩展来生成速写指令`key:title #prepend:标题：`
+                            $value: (value) => `标题：${value}`, // 进行重命名和数据格式化，可以通过扩展来生成速写指令`key:title #prepend:标题：`
                         },
-                        price: (value) => '￥' + value.toFixed(2), // 进行数据格式
+                        price: (value) => `￥${value.toFixed(2)}`, // 进行数据格式
                         goodsType: { $emap: { normal: '常规商品', virtual: '虚拟商品' } }, // 进行映射转化，速写指令`emap:normal:常规商品,virtual:虚拟商品`
-                        goodsStatus: { $enum: [null, '销售中', '已下架', '缺货'] }, // 进行枚举转化，速写指令`enum:,销售中,已下架,缺货`
+                        goodsStatus: { $enum: [ null, '销售中', '已下架', '缺货' ] }, // 进行枚举转化，速写指令`enum:,销售中,已下架,缺货`
                         goodsSkuList: (value) => value.map(item => item.attrs.join('-')), // 对数组的值直接处理
                         isSale: Boolean, // 类型
                         createTime: '#dateDefault', // 无参数预设格式化处理
@@ -145,7 +145,7 @@ module.exports = {
                             modifyTime: 2019,
                         },
                     ],
-                    provinces: ['中国', '美国', '日本'],
+                    provinces: [ '中国', '美国', '日本' ],
                 })
             })
         })

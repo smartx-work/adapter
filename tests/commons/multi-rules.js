@@ -9,8 +9,8 @@ module.exports = {
                 const newData = transform({
                     status: [
                         true,
-                        { $key: 'statusText', $enum: ['已下架', '已上架'] },
-                        { $key: 'statusText2', $emap: { '0': '否', '1': '是' } },
+                        { $key: 'statusText', $enum: [ '已下架', '已上架' ] },
+                        { $key: 'statusText2', $emap: { 0: '否', 1: '是' } },
                         { $key: 'isOK', $type: Boolean },
                         { $key: 'fixedValue', $value: (value) => value.toFixed(2) },
                         { $key: 'name', $value: (value) => value.toFixed(2) },

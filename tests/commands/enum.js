@@ -4,7 +4,7 @@ module.exports = {
             const testData = { state: 1 }
 
             test('对象型配置；基础枚举转化', () => {
-                const newData = transform({ state: { $enum: ['中国', '美国', '日本', '英国'] } }, testData)
+                const newData = transform({ state: { $enum: [ '中国', '美国', '日本', '英国' ] } }, testData)
                 expect(newData.state).toBe('美国')
             })
 

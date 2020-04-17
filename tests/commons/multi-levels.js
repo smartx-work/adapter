@@ -93,7 +93,7 @@ module.exports = {
                     name: 'key:userName',
                     books: {
                         name: 'bookName',
-                        price: { $default: '未知', $value: (value) => value.toFixed(2) + '元' },
+                        price: { $default: '未知', $value: (value) => `${value.toFixed(2)}元` },
                         contents: (value) => value.join(','),
                     },
                 }, testData)

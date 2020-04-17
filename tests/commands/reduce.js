@@ -15,12 +15,12 @@ module.exports = {
             test('单层层级减少', () => {
                 const newData = transform({
                     data1: {
-                        $reduce: ['data2', {
+                        $reduce: [ 'data2', {
                             data3: {
                                 name: true,
                                 age: Boolean,
                             },
-                        }],
+                        } ],
                     },
                 }, testData)
                 expect(newData).toEqual({
@@ -35,14 +35,14 @@ module.exports = {
 
             test('多层层级减少', () => {
                 const newData = transform({
-                    $reduce: ['data1', {
-                        $reduce: ['data2', {
-                            $reduce: ['data3', {
+                    $reduce: [ 'data1', {
+                        $reduce: [ 'data2', {
+                            $reduce: [ 'data3', {
                                 name: true,
                                 age: Boolean,
-                            }],
-                        }],
-                    }],
+                            } ],
+                        } ],
+                    } ],
                 }, testData)
 
                 expect(newData).toEqual({
@@ -71,34 +71,34 @@ module.exports = {
                 const newData = transform({
                     $reduce: {
                         data1: {
-                            $reduce: ['data11', {
+                            $reduce: [ 'data11', {
                                 data111: {
                                     $key: 'data1',
                                     name: true,
                                     age: true,
                                 },
-                            }],
+                            } ],
                         },
                         data2: {
-                            $reduce: ['data22', {
+                            $reduce: [ 'data22', {
                                 data222: {
                                     $key: 'data2',
                                     name: true,
                                     age: true,
                                 },
-                            }],
+                            } ],
                         },
                     },
                 }, testData)
                 expect(newData).toEqual({
-                    data1: [{
+                    data1: [ {
                         name: '张三',
                         age: 1,
-                    }],
-                    data2: [{
+                    } ],
+                    data2: [ {
                         name: '李四',
                         age: 2,
-                    }],
+                    } ],
                 })
             })
         })

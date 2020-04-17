@@ -12,35 +12,35 @@ module.exports = {
 
             test('单层层级增加', () => {
                 const newData = transform({
-                    $increase: ['data1', {
+                    $increase: [ 'data1', {
                         name: true,
                         age: String,
                         books: (value) => value.map(item => item.name).join(','),
-                    }],
+                    } ],
                 }, testData)
 
                 expect(newData).toEqual({
                     data1: {
                         name: '张三',
                         age: '12',
-                        books: ['水浒传', '西游记'].join(','),
+                        books: [ '水浒传', '西游记' ].join(','),
                     },
                 })
             })
 
             test('多层层级增加', () => {
                 const newData = transform({
-                    $increase: ['data1', {
+                    $increase: [ 'data1', {
                         name: true,
-                        $increase: ['data2', {
+                        $increase: [ 'data2', {
                             name: true,
-                            $increase: ['data3', {
+                            $increase: [ 'data3', {
                                 name: true,
                                 age: String,
                                 books: (value) => value.map(item => item.name).join(','),
-                            }],
-                        }],
-                    }],
+                            } ],
+                        } ],
+                    } ],
                 }, testData)
 
                 expect(newData).toEqual({
@@ -51,7 +51,7 @@ module.exports = {
                             data3: {
                                 name: '张三',
                                 age: '12',
-                                books: ['水浒传', '西游记'].join(','),
+                                books: [ '水浒传', '西游记' ].join(','),
                             },
                         },
                     },

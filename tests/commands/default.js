@@ -1,7 +1,7 @@
 module.exports = {
     run ({ transform }) {
         describe('\n=== 默认值指令：$default', () => {
-            const testData = { userName: '张三', books: [ { name: '水浒传', price: null, contents: null }, { name: null, price: null, contents: ['这是一本天书', '无人能够练成'] } ] }
+            const testData = { userName: '张三', books: [ { name: '水浒传', price: null, contents: null }, { name: null, price: null, contents: [ '这是一本天书', '无人能够练成' ] } ] }
 
             test('字符串型配置；值模式默认值', () => {
                 const newData = transform({
@@ -40,7 +40,7 @@ module.exports = {
 
                 expect(newData.books).toEqual([
                     { contents: [] },
-                    { contents: ['这是一本天书', '无人能够练成'] },
+                    { contents: [ '这是一本天书', '无人能够练成' ] },
                 ])
             })
         })

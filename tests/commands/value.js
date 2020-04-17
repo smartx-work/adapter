@@ -29,7 +29,7 @@ module.exports = {
                         },
                         age: 12,
                         sex: 'man',
-                        letters: () => ['A', 'B'],
+                        letters: () => [ 'A', 'B' ],
                         date: now,
                         regexp: /aaa/g,
                     },
@@ -40,7 +40,7 @@ module.exports = {
                     name: '张三',
                     age: 12,
                     sex: 'man',
-                    letters: ['A', 'B'],
+                    letters: [ 'A', 'B' ],
                     date: now,
                     regexp: /aaa/g,
                     books: testData.books,
@@ -62,7 +62,7 @@ module.exports = {
                             books: {
                                 $reduce: {
                                     info: {
-                                        name: (value) => '书名：' + value,
+                                        name: (value) => `书名：${value}`,
                                     },
                                 },
                             },

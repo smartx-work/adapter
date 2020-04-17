@@ -25,7 +25,7 @@ module.exports = {
 
             test('自定义清除指令', () => {
                 const newData = transform({
-                    $clears: [false, null, 111, (value, runtime) => true],
+                    $clears: [ false, null, 111, (value, runtime) => true ],
                     $strict: false,
                 }, testData)
 

@@ -1,6 +1,6 @@
 {
   "name": "@smartx/adapter",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "js data processing adapter",
   "main": "index.js",
   "repository": "https://github.com/smartx-work/adapter.git",
@@ -10,13 +10,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@smartx/eslint-config-tendative": "^1.1.2",
-    "eslint": "^5.16.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-node": "^9.1.0",
-    "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "@smartx/eslint-config-tentative": "^1.2.1",
     "jest": "^24.8.0"
   }
 }
