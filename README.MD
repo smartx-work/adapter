@@ -55,7 +55,58 @@ const newData = adapter.transform({
 ### 模式指令
 
 + `$strict` 适配器严格模式，默认`true` 
++ `$clears` 清除模式，默认false
 
+#### `$strict` 指令示例
+
+##### 严格模式
+
+严格模式会对字段和适配器进行一一对应，适配器中未声明的字段将自动过滤
+
+```js
+const testData = { key1:1, key2:1, key3:1 }
+const newData = adapter.transform({
+    key1: true
+}, testData)
+
+// 输出 newData === { key1:1 }
+```
+
+##### 非严格模式
+
+非严格模式会拷贝所有未在适配器中定义的原始字段
+
+```js
+const testData = { key1:1, key2:1, key3:1 }
+const newData = adapter.transform({
+    $strict: false,
+    key1: () => 666
+}, testData)
+
+// 输出 newData === { key1:666, key2:1, key3:1 }
+```
+
+#### `$clears` 指令示例
+
+`$clears`指令可以控制过滤符合条件的字段，比如值为`null`，`undefined`，空字符串等字段
+
+当`$clears`设置为`true`时，则默认采用`[null, undefined, '']`规则进行过滤
+
+```js
+const testData = { key1:'', key2:undefined, key3:null, key4:false, key5:555, key6:666}
+
+const newData1 = adapter.transform({
+    $strict: false,
+    $clears: true
+}, testData)
+// 输出 newData1 === { key4:false, key4:false, key5:555, key6:666 }
+
+const newData2 = adapter.transform({
+    $strict: false,
+    $clears: ['null', 555]
+}) 
+// 输出 newData2 === {key1:'', key2:undefined, key4:false, key6:666}
+```
 
 ### 转换指令
 
@@ -75,6 +126,38 @@ const newData = adapter.transform({
 ### 字段衍生
 
 可以将一个字段衍生出多个不同的字段，只要使用数组方式传递，例如：`[ { $key:'value1', type:Boolean, }, { $key:'value2', type:Number } ]` 将会使用原字段生成2个字段，分别是`value1`, `value2`，转换规则调用类型转换
+
+### 运行上下
+
+所有`function`类型的适配规则，都有一个上下文环境变量`runtime`，比如`$value(value, runtime)`，`$default(runtime)`
+
+```js
+const testData = {
+    type: 3,
+    data: {
+        books: [
+            {name:'水浒传'},
+            {name:'西游记'}
+        ]
+    }
+}
+
+const newData = adapter.transform({
+    data:{
+        books: {
+            name: (value, { row, index, root }){
+                // row 返回 项{name:'...'}
+                // index 返回 项的下标
+                // root 返回 根数据testData
+                return `${index}.${value}`
+            }
+        }
+    }
+})
+
+// 输出 newData === { data:{ books: [ {name:'0.水浒传'}, {name:'1.西游记'} ] } }
+```
+
 
 ## API方法
 
@@ -209,8 +292,8 @@ const newData = adapter.transform({
 ```js
 const testData = { value: 1, data: { name:'张三' } }
 const newData = adapter.transform({
-    value: (value) => value + 'K',
-    data: (value) => value.name
+    value: (value, runtime) => value + 'K',
+    data: (value,) => value.name
 }, testData)
 
 // 输出

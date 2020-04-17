@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@smartx/eslint-config-tendative": "^1.0.2",
+    "@smartx/eslint-config-tendative": "^1.1.2",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.3",
